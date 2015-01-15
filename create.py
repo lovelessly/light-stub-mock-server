@@ -3,6 +3,10 @@
 #xlrd 为第三方依赖库，提供对excel表格的支持
 import xlrd
 import json
+import sys
+
+reload(sys)   
+sys.setdefaultencoding('utf8')  
 
 string_header = '''# -*- coding: utf-8 -*-
 from flask import Flask
@@ -69,8 +73,7 @@ string_func_3 = '''
 string_func_4 = '''
         try:
             if(%s):
-                ret = %s
-                ret = %s.dumps(ret)
+                ret = '%s'
         except:
             pass
 '''
@@ -125,7 +128,10 @@ for action in api_list.keys():
         #普通http请求
         if(branch['req_pack'] == 'http'):
             for key in params.keys():
-                test_string += "\"%s\" == request.form['%s'] and "%(params[key],key)
+                if( type(params[key]) == type({})):
+                    test_string += "%s == json.loads(request.form['%s']) and "%(params[key],key)
+                else:
+                    test_string += "\"%s\" == request.form['%s'] and "%(params[key],key)
             test_string += 'True'
             
         #处理需要解包的请求参数条件
@@ -144,7 +150,7 @@ for action in api_list.keys():
         #如果返回类型不是无参数，需要进入if语句，生成if语句
         if(branch['req_pack'] != 'noparams'):
             try:    
-                string_return += string_func_4%(test_string,branch['output'],branch['ret_pack'])
+                string_return += string_func_4%(test_string,branch['output'])
                 del test_string
             except:
                 pass
