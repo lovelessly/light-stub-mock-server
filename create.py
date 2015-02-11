@@ -66,6 +66,7 @@ string_func_3 = '''
             return %s.dumps({'status':0})
 '''
 
+#这里对一站式做了个兼容，返回值返回请求参数中的id值
 string_func_4 = '''
         try:
             if(%s):
