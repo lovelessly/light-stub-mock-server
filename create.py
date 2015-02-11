@@ -70,6 +70,8 @@ string_func_4 = '''
         try:
             if(%s):
                 ret = %s
+                if(unpack.has_key('id')):
+                    ret['id'] = unpack['id']
                 ret = %s.dumps(ret)
         except:
             pass
@@ -110,7 +112,7 @@ for action in api_list.keys():
     #不同参数返回不同的返回值
     default_return = 'json.dumps({"status":0})'
     string_return = ''
-    
+
     #处理不同的传入参数，进入不同的if语句
     for branch in api_list[action]:
         
@@ -143,7 +145,7 @@ for action in api_list.keys():
 
         #如果返回类型不是无参数，需要进入if语句，生成if语句
         if(branch['req_pack'] != 'noparams'):
-            try:    
+            try:
                 string_return += string_func_4%(test_string,branch['output'],branch['ret_pack'])
                 del test_string
             except:
